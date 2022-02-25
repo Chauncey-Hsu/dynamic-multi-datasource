@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author dgd123
@@ -16,5 +16,6 @@ import java.util.List;
  */
 public interface OrderService extends IService<Order> {
     List<Order> getOrderList();
+
     BigDecimal getOrderPriceByUserId(Integer userId);
 }

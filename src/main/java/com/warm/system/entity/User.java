@@ -3,6 +3,7 @@ package com.warm.system.entity;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.IdType;
 import lombok.Data;
@@ -18,6 +19,7 @@ import java.util.Date;
  * @author dgd123
  * @since 2018-02-10
  */
+@TableName(value = "public.user")
 @Data
 public class User extends Model<User> {
 
