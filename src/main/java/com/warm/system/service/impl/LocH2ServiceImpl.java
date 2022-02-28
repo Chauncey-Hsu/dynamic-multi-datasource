@@ -27,6 +27,16 @@ public class LocH2ServiceImpl extends ServiceImpl<LocH2Mapper, Loc> implements L
     public List<Loc> list(double minLon, double maxLon, double minLat, double maxLat, LocalDateTime minTime, LocalDateTime maxTime) {
         return locH2Mapper.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
     }
+
+    @Override
+    public void delete1(Double minLon, Double maxLon, Double minLat, Double maxLat, LocalDateTime minTime, LocalDateTime maxTime) {
+        locH2Mapper.delete1(minLon, maxLon, minLat, maxLat, minTime, maxTime);
+    }
+
+    @Override
+    public void insertBatch1(List<Loc> resultList) {
+        insertBatch(resultList);
+    }
 //    @Autowired
 //    private OrderMapper orderMapper;
 //

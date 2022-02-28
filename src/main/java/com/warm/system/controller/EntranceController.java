@@ -1,8 +1,10 @@
 package com.warm.system.controller;
 
 import com.warm.system.common.Dic;
+import com.warm.system.entity.AheatSerial;
 import com.warm.system.entity.H2MetaLoc;
 import com.warm.system.entity.Loc;
+import com.warm.system.service.db1.AheatSerialService;
 import com.warm.system.service.db1.LocPgService;
 import com.warm.system.service.db2.H2MeatLocService;
 import com.warm.system.service.db2.LocH2Service;
@@ -33,9 +35,28 @@ public class EntranceController {
     @Autowired
     H2MeatLocService h2MeatLocService;
     @Autowired
+    AheatSerialService aheatSerialService;
+    @Autowired
     PrefetchHandler prefetchHandler;
     @Autowired
     ReplacementHandler replaceHandler;
+
+
+    @GetMapping("accessDirect")
+    public List<Loc> accessDirect(double minLon, double maxLon,
+                                  double minLat, double maxLat,
+                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date minDate,
+                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date maxDate) {
+
+        ZoneId zoneId = ZoneId.systemDefault();
+        Instant instant = minDate.toInstant();
+        LocalDateTime minTime = instant.atZone(zoneId).toLocalDateTime();
+        Instant instant1 = maxDate.toInstant();
+        LocalDateTime maxTime = instant1.atZone(zoneId).toLocalDateTime();
+
+        List<Loc> list1 = locH2Service.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
+        return list1;
+    }
 
     @GetMapping("access")
     public List<Loc> accessDB(double minLon, double maxLon,
@@ -55,8 +76,8 @@ public class EntranceController {
         List<H2MetaLoc> list = h2MeatLocService.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
         if (!list.isEmpty()) {
             List<Loc> list1 = locH2Service.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
-            // 热度维护 TODO
-//            heat(list1);
+            // 热度维护
+            Dic.pool.execute(() -> replaceHandler.accessHot(list.get(0), null));
             return list1;
         }
 
@@ -90,28 +111,28 @@ public class EntranceController {
         if (null == range) {
             // 没有临近时空缓存
             H2MetaLoc metaLoc = new H2MetaLoc(null, minLon, maxLon, minLat, maxLat, minTime, maxTime, resultList.size());
+            // 新增1、2
             h2MeatLocService.save(metaLoc);
             if (!resultList.isEmpty()) {
-                locH2Service.insertBatch(resultList);
+                locH2Service.insertBatch1(resultList);
             }
+            AheatSerial aheatSerial = new AheatSerial(metaLoc.getId(), 0D, metaLoc.getSum(), LocalDateTime.now());
+            aheatSerialService.insert1(aheatSerial);
+
+            metaLoc.setId(metaLoc.getId());
+            replaceHandler.accessHot(metaLoc, null);
         } else {
             // 有临近时空缓存，并获取最大查询范围，
             List<Loc> hhh = locPgService.list(range.getMinLon(), range.getMaxLon(), range.getMinLat(), range.getMaxLat(), range.getMinTime(), range.getMaxTime());
             range.setId(null);
             range.setSum(hhh.size());
+            // 新增1、2
             h2MeatLocService.save(range);
+            aheatSerialService.insert1(new AheatSerial(range.getId(), 0D, range.getSum(), LocalDateTime.now()));
             if (!hhh.isEmpty())
-                locH2Service.insertBatch(hhh);
-//            heat(); TODO
+                locH2Service.insertBatch1(hhh);
+            replaceHandler.accessHot(range, null);
             return;
         }
-
-        // 这里没有拆分。
-//        List<H2MetaLoc> list = h2MeatLocService.overlap(minLon, maxLon, minLat, maxLat, minTime, maxTime);
-//        直接存入，
-//
-//        然后，判断预读取
-//
-//        然后替换算法执行。
     }
 }

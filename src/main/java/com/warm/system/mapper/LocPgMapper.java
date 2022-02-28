@@ -21,7 +21,7 @@ import java.util.List;
 @Repository
 public interface LocPgMapper extends BaseMapper<Loc> {
 
-    @Select("select * from paper1.loc where LONGITUDE > #{minLon} and LONGITUDE < #{maxLon} and latitude > #{minLat} " +
+    @Select("select * from loc where LONGITUDE > #{minLon} and LONGITUDE < #{maxLon} and latitude > #{minLat} " +
             "and latitude < #{maxLat} and utc > #{minTime} and utc < #{maxTime}")
     List<Loc> list(@Param("minLon") double minLon, @Param("maxLon") double maxLon,
                    @Param("minLat") double minLat, @Param("maxLat") double maxLat,

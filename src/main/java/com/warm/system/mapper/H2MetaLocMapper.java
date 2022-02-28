@@ -20,8 +20,12 @@ import java.util.List;
 @Repository
 public interface H2MetaLocMapper extends BaseMapper<H2MetaLoc> {
 
+    @Select("select * from H2_META_LOC where ID = #{id}")
+    H2MetaLoc selectById1(@Param("id") Integer id);
+
     /**
      * 查询在条件时空范围内的数据
+     *
      * @param minLon
      * @param maxLon
      * @param minLat

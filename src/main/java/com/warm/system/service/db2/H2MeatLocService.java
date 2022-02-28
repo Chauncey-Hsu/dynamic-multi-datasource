@@ -22,6 +22,9 @@ public interface H2MeatLocService extends IService<H2MetaLoc> {
 
     H2MetaLoc near(double minLon, double maxLon, double minLat, double maxLat, LocalDateTime minTime, LocalDateTime maxTime);
 
-    void save(H2MetaLoc metaLoc);
+    Integer save(H2MetaLoc metaLoc);
 
+    H2MetaLoc selectById1(Integer id);
+
+    void deleteById1(Integer id);
 }

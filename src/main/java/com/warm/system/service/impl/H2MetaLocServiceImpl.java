@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.warm.system.entity.H2MetaLoc;
 import com.warm.system.mapper.H2MetaLocMapper;
 import com.warm.system.mapper.LocH2Mapper;
+import com.warm.system.service.db1.AheatSerialService;
 import com.warm.system.service.db2.H2MeatLocService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class H2MetaLocServiceImpl extends ServiceImpl<H2MetaLocMapper, H2MetaLoc
     H2MetaLocMapper h2MetaLocMapper;
     @Autowired
     LocH2Mapper locH2Mapper;
+    @Autowired
+    AheatSerialService aheatSerialService;
 
     @Override
     public List<H2MetaLoc> list(double minLon, double maxLon, double minLat, double maxLat, LocalDateTime minTime, LocalDateTime maxTime) {
@@ -84,9 +87,10 @@ public class H2MetaLocServiceImpl extends ServiceImpl<H2MetaLocMapper, H2MetaLoc
                 lats.add(metaLoc.getMinLat());
                 ts.add(metaLoc.getMaxTime());
                 ts.add(metaLoc.getMinTime());
+                // 执行删除1、2、3
                 locH2Mapper.delete1(metaLoc.getMinLon(), metaLoc.getMaxLon(), metaLoc.getMinLat(), metaLoc.getMaxLat(), metaLoc.getMinTime(), metaLoc.getMaxTime());
-                h2MetaLocMapper.deleteById(metaLoc.getId());
-//                heat();TODO
+                deleteById1(metaLoc.getId());
+                aheatSerialService.deleteById1(metaLoc.getId());
             }
             lons.add(tempMeta.getMinLon());
             lons.add(tempMeta.getMaxLon());
@@ -105,7 +109,17 @@ public class H2MetaLocServiceImpl extends ServiceImpl<H2MetaLocMapper, H2MetaLoc
     }
 
     @Override
-    public void save(H2MetaLoc metaLoc) {
-        h2MetaLocMapper.insert(metaLoc);
+    public Integer save(H2MetaLoc metaLoc) {
+        return h2MetaLocMapper.insert(metaLoc);
+    }
+
+    @Override
+    public H2MetaLoc selectById1(Integer id) {
+        return h2MetaLocMapper.selectById1(id);
+    }
+
+    @Override
+    public void deleteById1(Integer id) {
+        deleteById(id);
     }
 }

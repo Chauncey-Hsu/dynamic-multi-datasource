@@ -20,4 +20,8 @@ public interface LocH2Service extends IService<Loc> {
 
 
     List<Loc> list(double minLon, double maxLon, double minLat, double maxLat, LocalDateTime minTime, LocalDateTime maxTime);
+
+    void delete1(Double minLon, Double maxLon, Double minLat, Double maxLat, LocalDateTime minTime, LocalDateTime maxTime);
+
+    void insertBatch1(List<Loc> resultList);
 }

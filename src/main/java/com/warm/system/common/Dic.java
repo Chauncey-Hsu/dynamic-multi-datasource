@@ -10,6 +10,12 @@ import java.util.concurrent.*;
  */
 public class Dic {
 
+    public static int lengthOfCache = 1000;
+
+    /**
+     * 访问序列的最大长度
+     */
+    public static int lengthOfAccess = 50;
     /**
      * 访问次数
      */
@@ -19,17 +25,17 @@ public class Dic {
      */
     public static int hitAcc = 0;
 
+    /**
+     * 线程池
+     */
     public static ExecutorService pool;
     static {
-
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
                 .setNameFormat("demo-pool-%d").build();
-
         //Common Thread Pool
         pool = new ThreadPoolExecutor(5, 200,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(1024), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
-
 //        pool.execute(()-> System.out.println(Thread.currentThread().getName()));
 //        pool.shutdown();//gracefully shutdown
     }

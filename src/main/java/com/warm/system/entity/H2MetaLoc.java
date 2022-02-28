@@ -1,6 +1,7 @@
 package com.warm.system.entity;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,6 @@ import java.util.Objects;
 
 /**
  * 缓存项的 元数据。
- * //@TableName(value = "paper1.beidou_ship_location_history_3")
  *
  * @author xuchuanqi
  * @date 2022/2/25 20:48.
@@ -20,10 +20,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@TableName("H2_META_LOC")
 public class H2MetaLoc {
 
 
-    @TableField("id")
+    @TableField("ID")
     private Integer id;
 
     @TableField("minLon")
