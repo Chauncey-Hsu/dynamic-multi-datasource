@@ -51,27 +51,29 @@ public class MybatisPlusConfig {
     }
 
     @Bean(name = "db1")
-    @ConfigurationProperties(prefix = "spring.datasource.druid.db1" )
-    public DataSource db1 () {
+    @ConfigurationProperties(prefix = "spring.datasource.druid.db1")
+    public DataSource db1() {
         return DruidDataSourceBuilder.create().build();
     }
 
     @Bean(name = "db2")
-    @ConfigurationProperties(prefix = "spring.datasource.druid.db2" )
-    public DataSource db2 () {
+    @ConfigurationProperties(prefix = "spring.datasource.druid.db2")
+    public DataSource db2() {
         return DruidDataSourceBuilder.create().build();
     }
+
     /**
      * 动态数据源配置
+     *
      * @return
      */
     @Bean
     @Primary
-    public DataSource multipleDataSource (@Qualifier("db1") DataSource db1,
-                                          @Qualifier("db2") DataSource db2 ) {
+    public DataSource multipleDataSource(@Qualifier("db1") DataSource db1,
+                                         @Qualifier("db2") DataSource db2) {
         DynamicDataSource dynamicDataSource = new DynamicDataSource();
-        Map< Object, Object > targetDataSources = new HashMap<>();
-        targetDataSources.put(DBTypeEnum.db1.getValue(), db1 );
+        Map<Object, Object> targetDataSources = new HashMap<>();
+        targetDataSources.put(DBTypeEnum.db1.getValue(), db1);
         targetDataSources.put(DBTypeEnum.db2.getValue(), db2);
         dynamicDataSource.setTargetDataSources(targetDataSources);
         dynamicDataSource.setDefaultTargetDataSource(db1);
@@ -81,7 +83,7 @@ public class MybatisPlusConfig {
     @Bean("sqlSessionFactory")
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
-        sqlSessionFactory.setDataSource(multipleDataSource(db1(),db2()));
+        sqlSessionFactory.setDataSource(multipleDataSource(db1(), db2()));
         //sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:/mapper/*/*Mapper.xml"));
 
         MybatisConfiguration configuration = new MybatisConfiguration();
@@ -108,7 +110,4 @@ public class MybatisPlusConfig {
         conf.setRefresh(true);
         return conf;
     }
-
-
-
 }

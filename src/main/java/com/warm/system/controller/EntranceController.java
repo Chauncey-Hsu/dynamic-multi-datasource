@@ -11,6 +11,7 @@ import com.warm.system.service.db2.LocH2Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
@@ -41,12 +42,12 @@ public class EntranceController {
     @Autowired
     ReplacementHandler replaceHandler;
 
-
     @GetMapping("accessDirect")
-    public List<Loc> accessDirect(double minLon, double maxLon,
-                                  double minLat, double maxLat,
+    public List<Loc> accessDirect(Double minLon, Double maxLon,
+                                  Double minLat, Double maxLat,
                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date minDate,
                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date maxDate) {
+
 
         ZoneId zoneId = ZoneId.systemDefault();
         Instant instant = minDate.toInstant();
@@ -54,13 +55,13 @@ public class EntranceController {
         Instant instant1 = maxDate.toInstant();
         LocalDateTime maxTime = instant1.atZone(zoneId).toLocalDateTime();
 
-        List<Loc> list1 = locH2Service.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
+        List<Loc> list1 = locPgService.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
         return list1;
     }
 
     @GetMapping("access")
-    public List<Loc> accessDB(double minLon, double maxLon,
-                              double minLat, double maxLat,
+    public List<Loc> accessDB(Double minLon, Double maxLon,
+                              Double minLat, Double maxLat,
                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date minDate,
                               @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date maxDate) {
         Dic.numAcc++;
@@ -75,12 +76,14 @@ public class EntranceController {
         // 先查看缓存中，是否命中
         List<H2MetaLoc> list = h2MeatLocService.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
         if (!list.isEmpty()) {
+            System.out.println("命中");
             List<Loc> list1 = locH2Service.list(minLon, maxLon, minLat, maxLat, minTime, maxTime);
             // 热度维护
             Dic.pool.execute(() -> replaceHandler.accessHot(list.get(0), null));
             return list1;
         }
 
+        System.out.println("没有命中");
         // 一期，跳过拆分查询，有点费劲。
 
         // 如果没有命中，直接查询数据库返回。

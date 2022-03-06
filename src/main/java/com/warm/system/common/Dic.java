@@ -10,12 +10,16 @@ import java.util.concurrent.*;
  */
 public class Dic {
 
-    public static int lengthOfCache = 1000;
-
+    /**
+     * 缓存的最大容量
+     */
+    public static int lengthOfCache = 100000;
     /**
      * 访问序列的最大长度
      */
-    public static int lengthOfAccess = 50;
+    public static int lengthOfAccess = 30;
+
+
     /**
      * 访问次数
      */
